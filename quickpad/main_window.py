@@ -6,13 +6,15 @@ from PyQt6.QtGui import (
     QAction, QCloseEvent, QFont, QFontDatabase, QKeySequence, QTextCharFormat,
 )
 from PyQt6.QtWidgets import (
-    QApplication, QFileDialog, QMainWindow, QMessageBox, QToolBar,
+    QApplication, QFileDialog, QLabel, QMainWindow, QMessageBox, QToolBar,
 )
 
 from . import storage
 from .document import SafeTextEdit, has_rich_content
 from .formatting import FormattingControls
 from .html_safety import sanitize_html
+from .search import DocumentSearch, FindReplaceDialog
+from .text_service import word_count
 
 FILE_FILTERS = "Text files (*.txt);;HTML files (*.html)"
 
@@ -105,6 +107,22 @@ class MainWindow(QMainWindow):
         QApplication.clipboard().dataChanged.connect(self._sync_paste_action)
         self._sync_paste_action()
 
+        self.search = DocumentSearch(self.editor)
+        self.find_dialog = FindReplaceDialog(self.search, self)
+        self.find_action = QAction("&Find...", self)
+        self.find_action.setShortcut(QKeySequence.StandardKey.Find)
+        self.find_action.triggered.connect(self.show_find_dialog)
+        self.find_next_action = QAction("Find &Next", self)
+        self.find_next_action.setShortcut(QKeySequence("F3"))
+        self.find_next_action.triggered.connect(self._find_next)
+        self.replace_action = QAction("&Replace...", self)
+        self.replace_action.setShortcut(QKeySequence.StandardKey.Replace)
+        self.replace_action.triggered.connect(self.show_find_dialog)
+        self.edit_menu.addSeparator()
+        self.edit_menu.addActions(
+            [self.find_action, self.find_next_action, self.replace_action]
+        )
+
         self.toolbar = QToolBar("Editing", self)
         self.toolbar.setObjectName("editingToolbar")
         self.toolbar.setAccessibleName("Editing toolbar")
@@ -122,6 +140,12 @@ class MainWindow(QMainWindow):
         self.formatting = FormattingControls(
             self.editor, self.format_menu, self.format_toolbar, self
         )
+        self.word_count_label = QLabel(self)
+        self.word_count_label.setAccessibleName("Word count")
+        self.word_count_label.setToolTip("Words in the current document")
+        self.statusBar().addPermanentWidget(self.word_count_label)
+        self.editor.textChanged.connect(self._update_word_count)
+        self._update_word_count()
         self.statusBar().showMessage("Ready")
 
         self.editor.document().modificationChanged.connect(self.setWindowModified)
@@ -130,6 +154,21 @@ class MainWindow(QMainWindow):
 
     def _sync_paste_action(self) -> None:
         self.paste_action.setEnabled(self.editor.canPaste())
+
+    def _update_word_count(self) -> None:
+        self.word_count_label.setText(f"Words: {word_count(self.editor.toPlainText())}")
+
+    def show_find_dialog(self) -> None:
+        self.find_dialog.show()
+        self.find_dialog.raise_()
+        self.find_dialog.activateWindow()
+        self.find_dialog.find_input.setFocus()
+
+    def _find_next(self) -> None:
+        if not self.find_dialog.find_input.toPlainText():
+            self.show_find_dialog()
+        else:
+            self.find_dialog.find_next()
 
     def _update_title(self) -> None:
         name = self.current_path.name if self.current_path else "Untitled"

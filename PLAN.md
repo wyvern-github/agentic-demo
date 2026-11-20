@@ -137,6 +137,10 @@ Test command for implementation:
 
 Set `QT_QPA_PLATFORM=offscreen` in headless test environments. Tests must use `pytestqt` and `tmp_path`.
 
+The requested final gate runs the suite and launch offscreen. Resize, focus,
+and dialog cancellation are exercised programmatically in that environment;
+native on-screen appearance and high-DPI behavior remain unverified.
+
 ## Git Delivery
 
 - `commit`: `milestone`

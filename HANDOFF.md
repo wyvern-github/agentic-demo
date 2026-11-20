@@ -15,9 +15,11 @@ push, or PR had been authorized or performed. Implementation and four local
 milestone commits are now authorized; push, PR, branch switching, and review
 remain explicitly out of scope.
 
-## First implementation action
+## Current action
 
-The Python Developer should read `PLAN.md`, `MILESTONES.md`, and this file, verify the existing workspace from disk, then implement M1 only. M1 is the cumulative shell/document-state milestone and must pass before M2 starts.
+M1 through M3 are committed. M4 and final offscreen verification have passed;
+commit the verified M4 changes and this checkpoint. Independent review remains
+pending at the user's request.
 
 ## Read-only starting state
 
@@ -40,7 +42,8 @@ This plan reconciles future implementation with existing untracked scaffolding. 
 - **push:** `off`
 - **pr:** `off`
 - **Feature branch switch:** not authorized
-- **Git writes:** not authorized during planning
+- **Git writes:** not authorized during planning; four milestone commits
+  authorized for implementation on the current branch
 
 ## Chronological checkpoints
 
@@ -130,3 +133,42 @@ This plan reconciles future implementation with existing untracked scaffolding. 
 - **Blockers:** none.
 - **Next executable action:** stage only M3 paths, inspect the staged diff,
   commit M3, then implement and test M4.
+
+### 2026-11-20T16:14:01+01:00 — Implementation coordinator — M4 and final verification
+
+- **Milestone:** M4 and the requested final gate passed; M4 commit follows.
+- **Changed paths:** `quickpad\main_window.py`, `quickpad\search.py`,
+  `quickpad\text_service.py`, `tests\test_find_replace.py`,
+  `tests\test_unicode.py`, `README.md`, `PLAN.md`, `MILESTONES.md`, and
+  `HANDOFF.md`.
+- **Resume and stash:** the user requested the current-branch stash. Stash
+  `1e396f9b37e00d6d738e61c330fa9d7bf1c15acd` was already restored in the
+  worktree; the tracked content, index, and all four untracked file hashes
+  matched. Its redundant entry was dropped without overwriting the worktree.
+- **Decisions:** Find Next includes overlapping occurrences; Replace All
+  replaces non-overlapping matches as one undoable operation. An initial
+  regression test found search from inside `banana` selecting the earlier
+  `ana`; both case modes now select the next occurrence, cycle through
+  overlapping results, and wrap correctly.
+- **Checks:** with `$env:QT_QPA_PLATFORM = 'offscreen'` and
+  `$env:PYTHONDONTWRITEBYTECODE = '1'`, using a fresh session-owned
+  `$testTemp` for each run:
+  - `& .\.venv\Scripts\python.exe -m pytest -q -p no:cacheprovider --basetemp $testTemp tests\test_shell.py tests\test_formatting.py tests\test_files.py tests\test_unsaved.py tests\test_find_replace.py tests\test_unicode.py`
+    passed **89 tests**.
+  - `& .\.venv\Scripts\python.exe -m pytest -q -p no:cacheprovider --basetemp $testTemp`
+    passed the complete suite: **89 tests**.
+  - `& .\.venv\Scripts\python.exe -m quickpad` stayed running offscreen for
+    five seconds and was then stopped. A separate Qt timer smoke verified the
+    event loop, visible editor, keyboard focus, 600×400 controls, word count,
+    and cancellation without losing a modified document.
+  - A Unicode search cross-check against a simple reference passed **268,324**
+    literal/casefold and overlapping/non-overlapping cases.
+- **Git choices/outcome:** M3 commit
+  `c318d3b22cc146ae8a4561a1ef64833da89830fc`; M4 commit is next. Push and PR
+  remain off. Independent review was explicitly deferred; no verdict claimed.
+- **Verification adjustment:** the user requested an offscreen final gate.
+  Resize, focus, and cancellation were checked programmatically rather than
+  by an on-screen human inspection. Native visual and high-DPI behavior
+  remain unverified.
+- **Next executable action:** stage only M4 product, test, and task-document
+  paths; inspect the full staged diff; commit M4 and record its SHA locally.
