@@ -5,7 +5,7 @@ from pathlib import Path
 import pytest
 from PyQt6.QtCore import QMimeData, Qt
 from PyQt6.QtGui import QColor, QFont, QTextCharFormat, QTextCursor
-from PyQt6.QtWidgets import QColorDialog, QFileDialog, QMessageBox
+from PyQt6.QtWidgets import QApplication, QColorDialog, QComboBox, QFileDialog, QMessageBox
 from pytestqt.qtbot import QtBot
 
 import quickpad.window as window_module
@@ -72,6 +72,22 @@ def test_format_controls_apply_to_subsequent_typing(
     qtbot.keyClicks(window.editor, "next")
     assert format_at(window, 0).fontWeight() == QFont.Weight.Bold
     assert format_at(window, 0).fontItalic()
+
+
+def test_font_controls_fit_at_normal_width_with_long_font_names(
+    window: MainWindow, qtbot: QtBot
+) -> None:
+    window.font_family.setSizeAdjustPolicy(
+        QComboBox.SizeAdjustPolicy.AdjustToMinimumContentsLengthWithIcon
+    )
+    window.font_family.setMinimumContentsLength(40)
+    window.resize(1000, 700)
+    QApplication.processEvents()
+    qtbot.waitUntil(lambda: window.toolbar.width() == 1000)
+    assert window.font_family.isVisible()
+    assert window.font_size.isVisible()
+    assert not window.font_family.visibleRegion().isEmpty()
+    assert not window.font_size.visibleRegion().isEmpty()
 
 
 @pytest.mark.parametrize(

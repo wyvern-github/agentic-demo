@@ -1,6 +1,6 @@
 # QuickPad handoff
 
-**State:** M4 verified; final verification is next.
+**State:** M4 committed; final verification is in progress.
 
 **Artifacts:** [Plan](./PLAN.md), [Milestones](./MILESTONES.md), [Handoff](./HANDOFF.md).
 
@@ -81,3 +81,19 @@
 - Investigation: The first regression run stalled in pytest-qt cleanup because it closes registered widgets before fixture teardown. The fixture now clears the modified flag in pytest-qt's `before_close_func`; the repeated checks above passed.
 - Blockers: None. Push and PR remain off.
 - Next action: commit M4 locally, then run the full suite and the documented launch command. Leave independent review pending as requested.
+
+### 2026-11-20 14:28:32 +01:00 | Python Developer | M4 delivery
+
+- Changed paths: `MILESTONES.md`, `HANDOFF.md` (receipt and final-gate status).
+- Decision and result: committed M4 locally as `48b8bcc6b1764e5afacbfe649927cd631e5f3212`; no push or PR. The staged diff was checked for unrelated files, secrets, and whitespace.
+- Checks: `git diff --cached --check` passed; `git status --short` was clean immediately after the commit.
+- Blockers: None.
+- Next action: run the full suite and documented launch command; record the results and any unavailable manual checks. Do not request independent review in this implementation-only stage.
+
+### 2026-11-20 14:41:10 +01:00 | Python Developer | M2 toolbar correction
+
+- Changed paths: `quickpad/window.py`, `tests/test_formatting.py`, `MILESTONES.md`, and `HANDOFF.md`.
+- Investigation and decision: Native Windows smoke testing at the 640-pixel minimum showed font family and size hidden in the toolbar overflow; synthetic expansion was unreliable with an active selection. Compact control widths keep them visible in that scenario. A long-font-name regression reproduced the issue without the width constraints. The size field was also checked at 512 pt to avoid clipping its suffix.
+- Checks: With `QT_QPA_PLATFORM=offscreen`, `.\.venv\Scripts\python.exe -m pytest -q tests\test_formatting.py` passed: **22 passed**. A native Windows Qt smoke check at 640×400 verified both controls visible, applied a font and 512 pt size to a selection, and confirmed the full size label fits. The earlier complete suite passed **75 tests** and the native launch closed with exit 0 before this correction; both final gates must be rerun against the corrected state.
+- Blockers: None. This in-scope correction needs an additional local commit because it was discovered after the four milestone commits; no push or PR.
+- Next action: commit the verified toolbar correction, then rerun the complete suite and native launch. Leave independent review pending.
