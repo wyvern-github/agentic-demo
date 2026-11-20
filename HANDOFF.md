@@ -1,6 +1,6 @@
 # QuickPad handoff
 
-**State:** M1 verified; M2 is next.
+**State:** M2 verified; M3 is next.
 
 **Artifacts:** [Plan](./PLAN.md), [Milestones](./MILESTONES.md), [Handoff](./HANDOFF.md).
 
@@ -32,3 +32,19 @@
 - Checks: `python -m venv .venv` and `.\.venv\Scripts\python.exe -m pip install -e ".[test]"` succeeded. With `QT_QPA_PLATFORM=offscreen`, `.\.venv\Scripts\python.exe -m pytest -q tests\test_files.py` passed: **13 passed**. `git check-ignore .venv\Scripts\python.exe` confirmed the environment is ignored.
 - Blockers: None. Push and PR remain off.
 - Next action: commit M1 locally, record its receipt, and implement M2 formatting and conversion.
+
+### 2026-11-20 14:12:53 +01:00 | Python Developer | M1 delivery
+
+- Changed paths: `MILESTONES.md`, `HANDOFF.md` (receipt and M2 status).
+- Decision and result: committed M1 locally as `d601cd0b32f0b67ed951be4c0720ba73a1365313`; no push or PR. The staged diff was checked for unrelated files, secrets, and whitespace before committing.
+- Checks: `git diff --cached --check` passed; `git status --short` was clean immediately after the commit.
+- Blockers: None.
+- Next action: implement M2, verify its exit check, update the artifacts, and commit.
+
+### 2026-11-20 14:19:13 +01:00 | Python Developer | M2
+
+- Changed paths: `quickpad/window.py`, `tests/test_formatting.py`, `MILESTONES.md`, and `HANDOFF.md`.
+- Decisions: Formatting operates on Qt selections or subsequent typing; plain documents disable its controls. Lossy TXT conversion requires confirmation before the atomic write, resets formatting and history only after success, and leaves rich state intact on cancellation or failure. Non-lossy text saves keep undo history.
+- Checks: With `QT_QPA_PLATFORM=offscreen`, `.\.venv\Scripts\python.exe -m pytest -q tests\test_formatting.py` passed: **21 passed**. The combined M1/M2 regression run, `.\.venv\Scripts\python.exe -m pytest -q tests\test_formatting.py tests\test_files.py -x`, passed: **34 passed**. The offscreen Qt plugin did not enumerate native Windows fonts, so font-choice appearance remains a native smoke-check item.
+- Blockers: None. Push and PR remain off.
+- Next action: commit M2 locally, record its receipt, and implement M3 Find & Replace.
