@@ -1,6 +1,6 @@
 # QuickPad handoff
 
-**State:** M2 verified; M3 is next.
+**State:** M3 verified; M4 is next.
 
 **Artifacts:** [Plan](./PLAN.md), [Milestones](./MILESTONES.md), [Handoff](./HANDOFF.md).
 
@@ -48,3 +48,19 @@
 - Checks: With `QT_QPA_PLATFORM=offscreen`, `.\.venv\Scripts\python.exe -m pytest -q tests\test_formatting.py` passed: **21 passed**. The combined M1/M2 regression run, `.\.venv\Scripts\python.exe -m pytest -q tests\test_formatting.py tests\test_files.py -x`, passed: **34 passed**. The offscreen Qt plugin did not enumerate native Windows fonts, so font-choice appearance remains a native smoke-check item.
 - Blockers: None. Push and PR remain off.
 - Next action: commit M2 locally, record its receipt, and implement M3 Find & Replace.
+
+### 2026-11-20 14:19:46 +01:00 | Python Developer | M2 delivery
+
+- Changed paths: `MILESTONES.md`, `HANDOFF.md` (receipt and M3 status).
+- Decision and result: committed M2 locally as `ba1d7f83a045f59c046f5ee66c66149f3176040b`; no push or PR. The staged diff was checked for unrelated files, secrets, and whitespace.
+- Checks: `git diff --cached --check` passed; `git status --short` was clean immediately after the commit.
+- Blockers: None.
+- Next action: implement M3, verify its exit check, update the artifacts, and commit.
+
+### 2026-11-20 14:22:59 +01:00 | Python Developer | M3
+
+- Changed paths: `quickpad/find_replace.py`, `quickpad/window.py`, `tests/test_find_replace.py`, `MILESTONES.md`, and `HANDOFF.md`.
+- Decisions: Find & Replace uses Qt document cursors for literal, case-insensitive matches and non-BMP-safe positions. Each replacement inherits the first matched character's format; Replace All is one undoable edit. Empty replacement deletes; invalid multiline input is disabled with feedback.
+- Checks: With `QT_QPA_PLATFORM=offscreen`, `.\.venv\Scripts\python.exe -m pytest -q tests\test_find_replace.py` passed: **13 passed**. The combined M1–M3 run, `.\.venv\Scripts\python.exe -m pytest -q tests\test_find_replace.py tests\test_formatting.py tests\test_files.py`, passed: **47 passed**.
+- Blockers: None. Offscreen resize and focus checks passed; native visual and display-scaling checks remain pending.
+- Next action: commit M3 locally, record its receipt, and implement M4 unsaved-change protection.

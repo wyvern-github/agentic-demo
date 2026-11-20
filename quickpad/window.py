@@ -24,8 +24,11 @@ from PyQt6.QtWidgets import (
     QSpinBox,
     QTextEdit,
     QToolBar,
+    QVBoxLayout,
+    QWidget,
 )
 
+from quickpad.find_replace import FindReplacePanel
 from quickpad.storage import (
     FILE_FILTERS,
     HTML_FILTER,
@@ -116,7 +119,14 @@ class MainWindow(QMainWindow):
         self.editor.setObjectName("editor")
         self.editor.setAcceptRichText(False)
         self.editor.setDocument(LocalTextDocument(self.editor))
-        self.setCentralWidget(self.editor)
+        central = QWidget(self)
+        layout = QVBoxLayout(central)
+        layout.setContentsMargins(0, 0, 0, 0)
+        self.find_panel = FindReplacePanel(self.editor, central)
+        self.find_panel.hide()
+        layout.addWidget(self.find_panel)
+        layout.addWidget(self.editor, 1)
+        self.setCentralWidget(central)
 
         self.word_count = QLabel(self)
         self.statusBar().addPermanentWidget(self.word_count)
@@ -157,6 +167,12 @@ class MainWindow(QMainWindow):
         self.redo_action.setShortcut(QKeySequence.StandardKey.Redo)
         self.redo_action.setEnabled(False)
         self.redo_action.triggered.connect(self.editor.redo)
+        self.find_action = QAction("&Find...", self)
+        self.find_action.setShortcut(QKeySequence.StandardKey.Find)
+        self.find_action.triggered.connect(self.find_panel.show_for_search)
+        self.replace_action = QAction("Find and &Replace...", self)
+        self.replace_action.setShortcut(QKeySequence.StandardKey.Replace)
+        self.replace_action.triggered.connect(self.find_panel.show_for_search)
 
         self.bold_action = QAction("&Bold", self, checkable=True)
         self.bold_action.setShortcut(QKeySequence.StandardKey.Bold)
@@ -203,6 +219,8 @@ class MainWindow(QMainWindow):
         )
         edit_menu = self.menuBar().addMenu("&Edit")
         edit_menu.addActions([self.undo_action, self.redo_action])
+        edit_menu.addSeparator()
+        edit_menu.addActions([self.find_action, self.replace_action])
         format_menu = self.menuBar().addMenu("F&ormat")
         format_menu.addActions(
             [self.bold_action, self.italic_action, self.underline_action, self.color_action]
