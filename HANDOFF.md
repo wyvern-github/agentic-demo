@@ -1,6 +1,6 @@
 # QuickPad handoff
 
-**State:** M3 verified; M4 is next.
+**State:** M4 verified; final verification is next.
 
 **Artifacts:** [Plan](./PLAN.md), [Milestones](./MILESTONES.md), [Handoff](./HANDOFF.md).
 
@@ -64,3 +64,20 @@
 - Checks: With `QT_QPA_PLATFORM=offscreen`, `.\.venv\Scripts\python.exe -m pytest -q tests\test_find_replace.py` passed: **13 passed**. The combined M1–M3 run, `.\.venv\Scripts\python.exe -m pytest -q tests\test_find_replace.py tests\test_formatting.py tests\test_files.py`, passed: **47 passed**.
 - Blockers: None. Offscreen resize and focus checks passed; native visual and display-scaling checks remain pending.
 - Next action: commit M3 locally, record its receipt, and implement M4 unsaved-change protection.
+
+### 2026-11-20 14:23:25 +01:00 | Python Developer | M3 delivery
+
+- Changed paths: `MILESTONES.md`, `HANDOFF.md` (receipt and M4 status).
+- Decision and result: committed M3 locally as `1f42c99eaae576495efb64a02788736d6b9e3b7b`; no push or PR. The staged diff was checked for unrelated files, secrets, and whitespace.
+- Checks: `git diff --cached --check` passed; `git status --short` was clean immediately after the commit.
+- Blockers: None.
+- Next action: implement M4, verify its exit check, update the artifacts, and commit.
+
+### 2026-11-20 14:28:06 +01:00 | Python Developer | M4
+
+- Changed paths: `quickpad/window.py`, `tests/conftest.py`, `tests/test_files.py`, `tests/test_formatting.py`, `tests/test_unsaved.py`, `README.md`, `MILESTONES.md`, and `HANDOFF.md`.
+- Decisions: New, Open, and Close offer Save, Discard, or Cancel for modified documents; failed or canceled saves stop the action. Discard followed by canceled or failed Open preserves the active document. Added launch and usage instructions.
+- Checks: With `QT_QPA_PLATFORM=offscreen`, `.\.venv\Scripts\python.exe -m pytest -q tests\test_unsaved.py` passed: **28 passed**. The M1–M3 regression run, `.\.venv\Scripts\python.exe -m pytest -q tests\test_files.py tests\test_formatting.py tests\test_find_replace.py`, passed: **47 passed**.
+- Investigation: The first regression run stalled in pytest-qt cleanup because it closes registered widgets before fixture teardown. The fixture now clears the modified flag in pytest-qt's `before_close_func`; the repeated checks above passed.
+- Blockers: None. Push and PR remain off.
+- Next action: commit M4 locally, then run the full suite and the documented launch command. Leave independent review pending as requested.

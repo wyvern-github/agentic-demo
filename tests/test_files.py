@@ -14,7 +14,7 @@ from quickpad.window import MainWindow
 
 
 def test_launch_typing_and_new_reset_identity_and_history(
-    window: MainWindow, qtbot: QtBot
+    window: MainWindow, qtbot: QtBot, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     assert window.editor.hasFocus()
     assert window.windowTitle() == "Untitled - QuickPad"
@@ -27,6 +27,9 @@ def test_launch_typing_and_new_reset_identity_and_history(
     assert window.windowTitle() == "Untitled* - QuickPad"
     assert window.editor.document().isUndoAvailable()
 
+    monkeypatch.setattr(
+        QMessageBox, "warning", lambda *args: QMessageBox.StandardButton.Discard
+    )
     window.new_action.trigger()
     assert window.editor.toPlainText() == ""
     assert window.current_path is None
@@ -110,6 +113,9 @@ def test_canceled_dialogs_leave_document_unchanged(
     window: MainWindow, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     window.editor.insertPlainText("unsaved")
+    monkeypatch.setattr(
+        QMessageBox, "warning", lambda *args: QMessageBox.StandardButton.Discard
+    )
     monkeypatch.setattr(QFileDialog, "getSaveFileName", lambda *args: ("", ""))
     monkeypatch.setattr(QFileDialog, "getOpenFileName", lambda *args: ("", ""))
     assert not window.save_document()
@@ -131,6 +137,9 @@ def test_unsupported_suffix_reports_error_without_changing_document(
     errors: list[str] = []
     monkeypatch.setattr(
         QMessageBox, "critical", lambda parent, title, text: errors.append(text)
+    )
+    monkeypatch.setattr(
+        QMessageBox, "warning", lambda *args: QMessageBox.StandardButton.Discard
     )
     monkeypatch.setattr(QFileDialog, "getOpenFileName", lambda *args: (str(path), ""))
     monkeypatch.setattr(
@@ -155,6 +164,9 @@ def test_invalid_utf8_and_read_failure_preserve_document(
     errors: list[str] = []
     monkeypatch.setattr(
         QMessageBox, "critical", lambda parent, title, text: errors.append(text)
+    )
+    monkeypatch.setattr(
+        QMessageBox, "warning", lambda *args: QMessageBox.StandardButton.Discard
     )
     monkeypatch.setattr(QFileDialog, "getOpenFileName", lambda *args: (str(current), ""))
     assert window.open_document()

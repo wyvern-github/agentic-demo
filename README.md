@@ -2,6 +2,21 @@
 
 A GitHub Copilot workspace for building small Python office applications, desktop utilities, and mini games. New GUI projects default to PyQt6 and use SQLite only when they need relational storage.
 
+## QuickPad
+
+QuickPad is a single-document editor for UTF-8 `.txt` and Qt rich-text `.html` files. It supports character and paragraph formatting, undo/redo, a live word count, and Find & Replace (`Ctrl+F` or `Ctrl+H`; `Esc` returns to the editor). Plain-text documents disable formatting. Saving formatted content as text asks before discarding styles; New, Open, and Exit protect unsaved edits. External HTML resources and images are not loaded, and there is no autosave.
+
+On Windows with Python 3.12 or newer:
+
+```powershell
+python -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -e ".[test]"
+.\.venv\Scripts\python.exe -m quickpad
+.\.venv\Scripts\python.exe -m pytest -q
+```
+
+For headless tests, set `QT_QPA_PLATFORM=offscreen` in the test process. Native Windows appearance, toolbar overflow, and display scaling still need a visual check.
+
 ## Start from a Brief
 
 In VS Code, open a local Copilot Chat agent session and select **Python Developer**. Try either of these prompts:

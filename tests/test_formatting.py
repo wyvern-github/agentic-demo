@@ -341,6 +341,9 @@ def test_unformatted_text_save_preserves_undo_history(
 def test_new_and_plain_open_do_not_inherit_the_previous_character_style(
     window: MainWindow, monkeypatch: pytest.MonkeyPatch, tmp_path: Path
 ) -> None:
+    monkeypatch.setattr(
+        QMessageBox, "warning", lambda *args: QMessageBox.StandardButton.Discard
+    )
     window.bold_action.trigger()
     window.editor.insertPlainText("bold")
     window.new_document()

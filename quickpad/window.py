@@ -6,6 +6,7 @@ from PyQt6.QtCore import QSignalBlocker, QUrl, Qt
 from PyQt6.QtGui import (
     QAction,
     QActionGroup,
+    QCloseEvent,
     QFont,
     QKeySequence,
     QTextBlockFormat,
@@ -158,6 +159,9 @@ class MainWindow(QMainWindow):
         self.save_as_action = QAction("Save &As...", self)
         self.save_as_action.setShortcut(QKeySequence.StandardKey.SaveAs)
         self.save_as_action.triggered.connect(self.save_as_document)
+        self.exit_action = QAction("E&xit", self)
+        self.exit_action.setShortcut(QKeySequence.StandardKey.Quit)
+        self.exit_action.triggered.connect(self.close)
 
         self.undo_action = QAction("&Undo", self)
         self.undo_action.setShortcut(QKeySequence.StandardKey.Undo)
@@ -217,6 +221,8 @@ class MainWindow(QMainWindow):
         file_menu.addActions(
             [self.new_action, self.open_action, self.save_action, self.save_as_action]
         )
+        file_menu.addSeparator()
+        file_menu.addAction(self.exit_action)
         edit_menu = self.menuBar().addMenu("&Edit")
         edit_menu.addActions([self.undo_action, self.redo_action])
         edit_menu.addSeparator()
@@ -365,13 +371,35 @@ class MainWindow(QMainWindow):
         self._update_word_count()
         self._update_formatting_state()
 
-    def new_document(self) -> None:
-        """Replace the current document with a blank rich-text document."""
+    def _confirm_abandon(self) -> bool:
+        if not self.editor.document().isModified():
+            return True
+        name = self.current_path.name if self.current_path is not None else "Untitled"
+        choice = QMessageBox.warning(
+            self,
+            "Unsaved changes",
+            f"Save changes to {name}?",
+            QMessageBox.StandardButton.Save
+            | QMessageBox.StandardButton.Discard
+            | QMessageBox.StandardButton.Cancel,
+            QMessageBox.StandardButton.Cancel,
+        )
+        if choice == QMessageBox.StandardButton.Save:
+            return self.save_document()
+        return choice == QMessageBox.StandardButton.Discard
+
+    def new_document(self) -> bool:
+        """Create a blank document after resolving any unsaved changes."""
+        if not self._confirm_abandon():
+            return False
         self._replace_contents("", DocumentFormat.HTML, None)
         self.editor.setFocus()
+        return True
 
     def open_document(self) -> bool:
         """Open a selected document, preserving the current one on failure."""
+        if not self._confirm_abandon():
+            return False
         filename, _ = QFileDialog.getOpenFileName(self, "Open", "", FILE_FILTERS)
         if not filename:
             return False
@@ -384,6 +412,13 @@ class MainWindow(QMainWindow):
         self._replace_contents(content, document_format, path)
         self.editor.setFocus()
         return True
+
+    def closeEvent(self, event: QCloseEvent) -> None:
+        """Prevent closing when unsaved changes have not been resolved."""
+        if self._confirm_abandon():
+            event.accept()
+        else:
+            event.ignore()
 
     def save_document(self) -> bool:
         """Save the current document, asking for a path when it is untitled."""
