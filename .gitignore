@@ -1,0 +1,6 @@
+/.venv/
+/.pytest_cache/
+/quickpad.egg-info/
+/quickpad/.venv/
+/quickpad/**/__pycache__/
+/tests/**/__pycache__/

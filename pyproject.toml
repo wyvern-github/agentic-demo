@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "quickpad"
+version = "0.1.0"
+description = "A small PyQt6 rich-text editor"
+requires-python = ">=3.12"
+dependencies = ["PyQt6>=6.5,<7"]
+
+[project.optional-dependencies]
+test = ["pytest>=8,<10", "pytest-qt>=4.4,<5"]
+
+[tool.setuptools.packages.find]
+include = ["quickpad*"]
+exclude = ["quickpad.egg-info*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+qt_api = "pyqt6"
