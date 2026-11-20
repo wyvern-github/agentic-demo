@@ -6,20 +6,20 @@
 - `PLAN.md`
 - `MILESTONES.md`
 - `HANDOFF.md`
-- `REVIEW.md` (created later by independent reviewer only)
+- `REVIEW.md` (independent review report)
 
 ## Plan-ready state
 
 At planning time, no application code, dependency manifest, tests, Git write,
 push, or PR had been authorized or performed. Implementation and four local
-milestone commits are now authorized; push, PR, branch switching, and review
-remain explicitly out of scope.
+milestone commits were subsequently authorized; push and PR remain off. The
+user later requested an independent review only.
 
 ## Current action
 
-M1 through M3 are committed. M4 and final offscreen verification have passed;
-commit the verified M4 changes and this checkpoint. Independent review remains
-pending at the user's request.
+All four milestones are committed and the implementation's offscreen suite
+passed. Independent review returned `CHANGES REQUIRED`; its gate is blocked
+by the findings in `REVIEW.md`. The user deferred those fixes.
 
 ## Read-only starting state
 
@@ -172,3 +172,52 @@ This plan reconciles future implementation with existing untracked scaffolding. 
   remain unverified.
 - **Next executable action:** stage only M4 product, test, and task-document
   paths; inspect the full staged diff; commit M4 and record its SHA locally.
+
+### 2026-11-20T16:17:43+01:00 — Implementation coordinator — M4 commit receipt
+
+- **Milestone:** M4 committed as `18484f63f9b4ddcc5429bcc07743918b77bec866`.
+- **Changed paths:** `HANDOFF.md` only for this local post-commit receipt.
+- **Checks:** `git --no-pager log -1 --format='%H%n%B'` verified the commit and
+  co-author trailer; `git --no-pager status --short --branch` was clean before
+  this receipt. The final suite passed 89 tests and the offscreen launch and
+  event-loop smoke passed as recorded above.
+- **Git outcome:** push and PR remain off. This receipt is intentionally not
+  committed separately just to record its own commit SHA.
+- **Remaining work:** independent review is pending only if requested later;
+  native on-screen and high-DPI visual checks remain unverified.
+- **Next executable action:** launch with `& .\.venv\Scripts\python.exe -m quickpad`,
+  or request the separately scoped independent review.
+
+### 2026-11-20T16:42:24+01:00 — Python Reviewer — Independent review
+
+- **Milestone:** IR gate blocked; verdict `CHANGES REQUIRED`.
+- **Changed paths:** `REVIEW.md`, `MILESTONES.md`, and `HANDOFF.md` only.
+- **Scope:** reviewed product at HEAD
+  `18484f63f9b4ddcc5429bcc07743918b77bec866` against the requested starting
+  HEAD `60a3f9d3c18f23976b83e5b6ba95359dff09a65e`, plus the existing local
+  handoff receipt. The two P1 and five P2 findings are detailed in
+  `REVIEW.md`.
+- **Checks:** the reviewer independently ran
+  `& .\.venv\Scripts\python.exe -m pytest -q -p no:cacheprovider --basetemp .review-verify-c2565a9a-20261120`
+  with `QT_QPA_PLATFORM=offscreen`: **89 passed**. Focused offscreen
+  reproductions, keyboard and resizing checks are documented in the report.
+- **Git outcome:** no review-stage commit, push, or PR. No application or
+  test fixes were made during this review-only turn.
+- **Blockers:** data and formatting loss, search/selection defects, and Replace
+  All responsiveness require correction before a passing independent review.
+  Native on-screen and high-DPI checks remain unverified.
+- **Next executable action:** if the user authorizes fixes, address the report,
+  retest, and request a new independent review.
+
+### 2026-11-20T16:44:37+01:00 — Delivery coordinator — Review documentation
+
+- **Milestone:** IR remains blocked; the user authorized committing the
+  review documentation and explicitly deferred the findings.
+- **Changed paths:** `REVIEW.md`, `MILESTONES.md`, and `HANDOFF.md` only.
+- **Checks:** documentation-only delivery; no tests rerun. The independent
+  review recorded 89 passing tests and the open findings above.
+- **Git decision:** commit these documents on `experiment/no-helpers` without
+  pushing or opening a PR. The report describes the pre-commit review
+  snapshot; application code is unchanged by this documentation commit.
+- **Next executable action:** if authorized later, fix the review findings,
+  retest, and obtain a new independent review.
