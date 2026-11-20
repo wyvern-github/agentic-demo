@@ -24,3 +24,19 @@ class SafeTextEdit(QTextEdit):
     def insertFromMimeData(self, source: QMimeData) -> None:
         if source.hasText():
             self.insertPlainText(source.text())
+
+
+def has_rich_content(editor: SafeTextEdit) -> bool:
+    """Treat explicit formatting as lossy even when it matches the default."""
+    block = editor.document().begin()
+    while block.isValid():
+        if block.textList() is not None or block.blockFormat().properties():
+            return True
+        iterator = block.begin()
+        while not iterator.atEnd():
+            fragment = iterator.fragment()
+            if fragment.isValid() and fragment.charFormat().properties():
+                return True
+            iterator += 1
+        block = block.next()
+    return False

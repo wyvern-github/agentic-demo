@@ -103,3 +103,30 @@ This plan reconciles future implementation with existing untracked scaffolding. 
 - **Blockers:** none.
 - **Next executable action:** stage only M2 paths, inspect the staged diff,
   commit M2, then implement and test M3.
+
+### 2026-11-20T15:38:39+01:00 — Python Developer — M3 verification
+
+- **Milestone:** M3 complete; local commit to follow this checkpoint.
+- **Changed paths:** `quickpad\html_safety.py`, `quickpad\storage.py`,
+  `quickpad\document.py`, `quickpad\main_window.py`, `tests\test_files.py`,
+  `tests\test_unsaved.py`, `tests\test_shell.py`, `README.md`, `MILESTONES.md`,
+  `HANDOFF.md`.
+- **Decisions:** stage and sanitise Open before prompting; if the guard saves
+  over that target, open the newly saved bytes. `QSaveFile` uses no direct-write
+  fallback. Explicit document formatting, including default-looking formatting,
+  warns before `.txt` conversion and is flattened only after a successful
+  write. HTML preserves safe inline font, colour, alignment, heading, whitespace
+  and list formatting while rejecting resource-bearing content. Two compact
+  toolbars keep font controls visible at the 600×400 minimum window size.
+- **Checks:** with `$env:QT_QPA_PLATFORM = 'offscreen'` and `PYTEST_ADDOPTS`
+  setting a unique project-local `--basetemp`,
+  `& .\.venv\Scripts\python.exe -m pytest -q tests\test_shell.py tests\test_formatting.py tests\test_files.py tests\test_unsaved.py`
+  passed **67 tests**. Tests use actual UTF-8/HTML files, a real cancelled
+  `QSaveFile` transaction, an actual OS write error, and clipboard/drop events;
+  the owned test scratch was removed. Editor diagnostics reported no errors.
+- **Git choices/outcome:** M2 commit
+  `ada3a114c0709a6a14c74982172b500db1f3ebe1` was created locally after staged
+  inspection. M3 is next; push and PR remain off.
+- **Blockers:** none.
+- **Next executable action:** stage only M3 paths, inspect the staged diff,
+  commit M3, then implement and test M4.

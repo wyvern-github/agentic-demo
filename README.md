@@ -18,3 +18,9 @@ For headless tests, use:
 $env:QT_QPA_PLATFORM = 'offscreen'
 & .\.venv\Scripts\python.exe -m pytest -q
 ```
+
+Use File to create, open, and save UTF-8 `.txt` or `.html` documents.
+Saving formatted text as `.txt` requires confirmation and converts the active
+document to plain text. HTML is restricted to safe text formatting; images,
+embedded content, scripts, stylesheets, and external resource loading are not
+supported. Clipboard and drag-and-drop insert plain text only.

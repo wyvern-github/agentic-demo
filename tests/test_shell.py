@@ -22,6 +22,15 @@ def test_window_opens_with_usable_editor_and_standard_actions(window):
     assert not window.redo_action.isEnabled()
 
 
+def test_format_controls_stay_accessible_at_minimum_width(window, qtbot):
+    window.resize(600, 400)
+    qtbot.wait(30)
+    assert window.formatting.font_family.isVisible()
+    assert window.formatting.font_size.isVisible()
+    assert window.format_menu.actions()
+    assert window.editor.isVisible()
+
+
 def test_typing_undo_and_redo_update_dirty_and_action_state(window, qtbot):
     qtbot.keyClicks(window.editor, "hello")
     assert window.editor.toPlainText() == "hello"
