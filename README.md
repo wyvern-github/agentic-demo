@@ -1,33 +1,22 @@
-# agentic-demo
+# agentic-demo: customization experiments
 
-A GitHub Copilot workspace for building small Python office applications, desktop utilities, and mini games. New GUI projects default to PyQt6 and use SQLite only when they need relational storage.
+These branches compare repository-level Copilot customizations for small Python desktop apps and games. Each experiment starts from the same `main` commit:
 
-## Start from a Brief
+| Branch | Custom agents | Instructions | Skills |
+| --- | --- | --- | --- |
+| `main` | Yes | Yes | Yes |
+| `experiment/no-agents` | No | Yes | Yes |
+| `experiment/no-instructions` | Yes | No | Yes |
+| `experiment/no-skills` | Yes | Yes | No |
+| `experiment/only-instructions` | No | Yes | No |
+| `experiment/only-skills` | No | No | Yes |
 
-In VS Code, open a local Copilot Chat agent session and select **Python Developer**. Try either of these prompts:
+Instructions include both `.github/copilot-instructions.md` and `.github/instructions/`. Remaining files have been adjusted to avoid references to removed customizations, so this is not a perfectly isolated single-variable experiment.
 
-- Build a PyQt invoice tracker with search and SQLite.
-- Make a keyboard-controlled tile-matching mini game.
+## Run a comparison
 
-Developer calls **Python Planner** before coding, implements and tests each milestone, then calls **Python Reviewer** to review the result independently. You do not need to click handoff buttons. VS Code tool approvals still apply, and a missing reviewer is reported as pending, not passed. Select **Python Planner** or **Python Reviewer** directly for a standalone plan or review.
+1. Check out one experiment branch in a clean workspace, before making any test changes. Start a new Copilot Chat session using the same model, settings, and built-in Agent mode for every branch.
+2. Use **Chat: Open Customizations** to check what is discovered. Disable or account for user-level, organization-level, plugin, and other external customizations: these branches only control the repository's files. Built-in agents and tools may still be available.
+3. Give the same prompt and Git delivery choices in every session. Commit the resulting work to that experiment branch, and record the prompt, environment, approvals, and results for comparison. Start each other experiment from its own unchanged branch, not from a prior experiment's result.
 
-After planning, Developer shows the milestones and asks once when to commit, when to push, and whether to open a ready, draft, or no pull request. On a dedicated GitHub feature branch, committing and pushing each verified milestone gives you a visible history. You can also choose to push only at the end or keep the work local. To skip the questions, include choices in the brief, for example: `commit=milestone, push=end, pr=draft`. The PR is opened only after final tests and independent review pass and the verified head is pushed.
-
-Each app task produces these root-level artifacts:
-
-| File | Purpose |
-| --- | --- |
-| `PLAN.md` | Scope, design, acceptance criteria, and verification plan. |
-| `MILESTONES.md` | Delivery checkpoints, test and review evidence, and Git delivery status. |
-| `HANDOFF.md` | Chronological record of changes, checks, Git choices and results, blockers, and the next action. |
-| `REVIEW.md` | Independent findings and verdict, with the branch, baseline, and known gaps. |
-
-In a new session, select **Python Developer** and ask it to resume from `HANDOFF.md`. Use a separate workspace or branch for unrelated app experiments.
-
-## Inspect the Setup
-
-- **Agents:** [Python Planner](.github/agents/plan.agent.md), [Python Developer](.github/agents/developer.agent.md), [Python Reviewer](.github/agents/reviewer.agent.md).
-- **Skills:** [PyQt UX/UI and color](.github/skills/pyqt-ux-ui/SKILL.md), [Advanced Python](.github/skills/advanced-python/SKILL.md), [SQLite management](.github/skills/sqlite-management/SKILL.md).
-- **Instructions:** [Workspace workflow](.github/copilot-instructions.md), [Python](.github/instructions/python-standards.instructions.md), [pytest](.github/instructions/pytest.instructions.md), [PyQt interface](.github/instructions/pyqt-interface.instructions.md), [Review](.github/instructions/review.instructions.md), [Planning and handoff](.github/instructions/planning-workflow.instructions.md).
-
-Run **Chat: Open Customizations** to check discovery. The agents request `reasoning-effort: max` when the selected model supports it; this is a reasoning preference, not a global creativity setting. The Markdown files guide agent behavior and do not bypass VS Code permissions.
+The experiment branches are local unless explicitly pushed. Switch branches or use separate worktrees only after saving any work you want to keep. Copilot customization files guide behavior; they do not bypass tool permissions.

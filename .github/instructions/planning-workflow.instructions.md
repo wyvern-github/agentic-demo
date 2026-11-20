@@ -6,7 +6,7 @@ description: "Use when planning, implementing, resuming, or handing off a Python
 
 ## Before Writing Application Code
 
-For every new application or planned feature, request a separate `PLAN.md` and `MILESTONES.md` from Python Planner and have it initialize `HANDOFF.md` in the workspace root. Do not ask the user to create these files. For planning-only requests, stop after writing the artifacts. For implementation, resolve the Git execution switches below once the milestones are clear, then proceed without routine confirmations.
+For every new application or planned feature, create `PLAN.md`, `MILESTONES.md`, and `HANDOFF.md` in the workspace root before application code. Do not ask the user to create these files. For planning-only requests, stop after writing the artifacts. For implementation, resolve the Git execution switches below once the milestones are clear, then proceed without routine confirmations.
 
 - `PLAN.md`: Give the task a title and date. Capture the user's brief, assumptions, in-scope and out-of-scope work, numbered acceptance criteria, platform and dependency choices, UI/workflow or gameplay sketches in text, project structure, persistence needs, risks, and a verification strategy mapped to the acceptance criteria. State how to run and test the result. Add a Git Delivery section for the execution switches and any target details; mark unchosen values pending.
 - `MILESTONES.md`: Use a table with milestone ID, deliverable and dependency, status, exit check, observed evidence, and Git delivery status. Use `Pending`, `In progress`, `Done`, or `Blocked` for the work, and track commit and push separately so a publication failure does not erase a passing exit check. Prefer independently testable slices. Include final testing and independent review as distinct gates. Do not mark a gate done without evidence.
@@ -14,7 +14,7 @@ For every new application or planned feature, request a separate `PLAN.md` and `
 
 ## Choose Git Execution Switches
 
-The user-facing coordinator (Python Developer when selected directly, or the built-in Agent when it delegates) owns this checkpoint. After planning and before implementation, inspect the current Git branch, status, and configured remotes. Show a short milestone summary and suggest a cadence based on the number of milestones and whether the branch is shared. Ask for the missing switches together using the interactive questions tool when available, or ask in chat and wait. Treat explicit choices in the brief, or confirmed choices for the same task on resume, as answers; no need to ask again. An unanswered choice never authorizes a Git write or publication.
+The user-facing coordinator owns this checkpoint. After planning and before implementation, inspect the current Git branch, status, and configured remotes. Show a short milestone summary and suggest a cadence based on the number of milestones and whether the branch is shared. Ask for the missing switches together using the interactive questions tool when available, or ask in chat and wait. Treat explicit choices in the brief, or confirmed choices for the same task on resume, as answers; no need to ask again. An unanswered choice never authorizes a Git write or publication.
 
 | Switch | Options | Recommendation |
 | --- | --- | --- |
