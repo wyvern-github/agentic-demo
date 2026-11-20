@@ -82,3 +82,24 @@ This plan reconciles future implementation with existing untracked scaffolding. 
 - **Blockers:** none.
 - **Next executable action:** stage only M1 paths, inspect the staged diff,
   commit M1, then implement and test M2.
+
+### 2026-11-20T15:23:30+01:00 — Python Developer — M2 verification
+
+- **Milestone:** M2 complete; local commit to follow this checkpoint.
+- **Changed paths:** `quickpad\formatting.py`, `quickpad\main_window.py`,
+  `tests\test_formatting.py`, `MILESTONES.md`, `HANDOFF.md`.
+- **Decisions:** shared menu/toolbar actions apply selection or insertion
+  formatting, with signal-blocked cursor synchronization. Bullet removal
+  preserves paragraph indentation and groups changes for undo. Font-family
+  entry remains usable when offscreen Qt has an empty font database.
+- **Checks:** with `$env:QT_QPA_PLATFORM = 'offscreen'`,
+  `& .\.venv\Scripts\python.exe -m pytest -q tests\test_shell.py tests\test_formatting.py tests\test_unsaved.py`
+  passed **20 tests**. The first run exposed the empty offscreen font database;
+  the control and test now handle it. Editor diagnostics reported no errors in
+  the changed Python files.
+- **Git choices/outcome:** M1 commit
+  `674a3291b1beb6d4c1e4c58525dfbc23b1d8715e` was created locally after its
+  staged diff was inspected. M2 is next; push and PR remain off.
+- **Blockers:** none.
+- **Next executable action:** stage only M2 paths, inspect the staged diff,
+  commit M2, then implement and test M3.

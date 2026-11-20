@@ -6,6 +6,7 @@ from PyQt6.QtGui import QAction, QCloseEvent, QFont, QFontDatabase, QKeySequence
 from PyQt6.QtWidgets import QApplication, QMainWindow, QMessageBox, QToolBar
 
 from .document import SafeTextEdit
+from .formatting import FormattingControls
 
 
 class MainWindow(QMainWindow):
@@ -52,6 +53,9 @@ class MainWindow(QMainWindow):
         self.toolbar.setMovable(False)
         self.addToolBar(self.toolbar)
         self.toolbar.addActions([self.new_action, self.undo_action, self.redo_action])
+        self.formatting = FormattingControls(
+            self.editor, self.format_menu, self.toolbar, self
+        )
         self.statusBar().showMessage("Ready")
 
         self.editor.document().modificationChanged.connect(self.setWindowModified)
