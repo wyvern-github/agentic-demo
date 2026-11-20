@@ -1,6 +1,6 @@
 # QuickPad handoff
 
-**State:** M4 committed; final verification is in progress.
+**State:** Implementation and final checks complete; independent review is pending.
 
 **Artifacts:** [Plan](./PLAN.md), [Milestones](./MILESTONES.md), [Handoff](./HANDOFF.md).
 
@@ -97,3 +97,22 @@
 - Checks: With `QT_QPA_PLATFORM=offscreen`, `.\.venv\Scripts\python.exe -m pytest -q tests\test_formatting.py` passed: **22 passed**. A native Windows Qt smoke check at 640×400 verified both controls visible, applied a font and 512 pt size to a selection, and confirmed the full size label fits. The earlier complete suite passed **75 tests** and the native launch closed with exit 0 before this correction; both final gates must be rerun against the corrected state.
 - Blockers: None. This in-scope correction needs an additional local commit because it was discovered after the four milestone commits; no push or PR.
 - Next action: commit the verified toolbar correction, then rerun the complete suite and native launch. Leave independent review pending.
+
+### 2026-11-20 14:41:34 +01:00 | Python Developer | Toolbar correction delivery
+
+- Changed paths: `MILESTONES.md`, `HANDOFF.md` (commit receipt).
+- Result: committed the verified correction locally as `0d345804e0113233e4e4368662df5931bb0972df`; no push or PR. The staged diff passed whitespace and scope checks.
+- Checks: `git diff --cached --check` passed; `git status --short` was clean immediately after the commit.
+- Blockers: None.
+- Next action: rerun the full suite and the documented native launch against this commit, then record final evidence and leave independent review pending.
+
+### 2026-11-20 14:43:30 +01:00 | Python Developer | Final verification
+
+- Changed paths: `MILESTONES.md`, `HANDOFF.md` (final evidence and delivery receipts).
+- Checks: With `QT_QPA_PLATFORM=offscreen`, `.\.venv\Scripts\python.exe -m pytest -q` passed: **76 passed**. `.\.venv\Scripts\python.exe -m pip check` reported no broken requirements.
+- Launch: `.\.venv\Scripts\python.exe -m quickpad` opened the native Windows `Untitled - QuickPad` window, responded to a Windows message, and exited **0** after a close request.
+- Workflow smoke: An offscreen QtTest exercise typed and formatted text, replaced matches, undid and redid, saved HTML, and reopened the formatted content successfully. Native Windows QtTest checks exercised empty/populated views, keyboard entry, mouse menu formatting, failed-save recovery, and 640×400 logical layout. Font and size controls remained usable at the minimum width, including 512 pt. A separate native run with `QT_SCALE_FACTOR=1.5` checked the search panel and toolbar at simulated 150% scaling.
+- Gaps: These UI checks used QtTest and rendered window captures, not physical mouse/keyboard interaction. Actual Windows display scaling and multi-monitor behavior were not manually verified. Independent review was not requested for this implementation-only stage; `REVIEW.md` does not yet exist.
+- Git: M1 `d601cd0b32f0b67ed951be4c0720ba73a1365313`, M2 `ba1d7f83a045f59c046f5ee66c66149f3176040b`, M3 `1f42c99eaae576495efb64a02788736d6b9e3b7b`, M4 `48b8bcc6b1764e5afacbfe649927cd631e5f3212`, and toolbar correction `0d345804e0113233e4e4368662df5931bb0972df` are local on `main`. Push and PR are off. Final receipt updates in `MILESTONES.md` and `HANDOFF.md` remain local and uncommitted; no extra commit was created solely for receipts.
+- Blockers: None for the requested implementation; independent review remains pending.
+- Next action: request a separate Python Reviewer to inspect the final state and write `REVIEW.md`; perform the remaining physical-input and real display-scaling checks when available.
